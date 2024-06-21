@@ -1,35 +1,29 @@
 import streamlit as st
 from PIL import Image
-from streamlit_drawable_canvas import st_canvas
 import numpy as np
 from solver import solve
+import os
 
-canvas_result = st_canvas(
-    fill_color="rgba(255, 165, 0, 0.3)",  # Fixed fill color with some opacity
-    stroke_width=5,
-    stroke_color="#ffffff",
-    background_color="#000000",
-    background_image=None,
-    update_streamlit=True,
-    height=500,
-    width=500,
-    drawing_mode="freedraw",
-    point_display_radius=0,
-    key="canvas",
-)
+# Get the list of files in the seeds folder
+seed_files = os.listdir("seeds")
 
-if canvas_result.image_data is not None:
-    data = canvas_result.image_data
-    #Turn to monochrome
-    image = Image.fromarray(data)
-    image = image.convert("L")
-    data = np.array(image)
-    #Renormalize to 0-1
-    data = (data - data.min()) / (data.max() - data.min())
-    print(data)
-    if st.button("Go"):
-        result = solve(data)
-        print(result)
-        #Renormalize to 0-1
-        result = (result - result.min()) / (result.max() - result.min())
-        st.image(result)
+# Create a sidebar with a select option
+selected_seed = st.sidebar.selectbox("Select Seed File", seed_files)
+
+st.markdown("Boundary Condition")
+canvas_container = st.empty()
+
+# Create a canvas with a black background
+with canvas_container.container():
+    st.image(np.zeros((500, 500, 3), dtype=np.uint8))
+
+# Read the selected seed file and insert the image into the canvas when 'apply' is pressed
+if st.sidebar.button("Apply"):
+    seed_image = Image.open(os.path.join("seeds", selected_seed))
+    with canvas_container.container():
+        st.image(seed_image)
+
+button = st.button("Go")
+
+st.markdown("---")
+st.markdown("Simulation Result")

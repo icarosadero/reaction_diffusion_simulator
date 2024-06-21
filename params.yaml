@@ -1,0 +1,11 @@
+#Diffusion constants
+DI: 0.24
+#D1: 5.112
+#D2: 0.057
+D1: 1
+D2: 1
+Ic: 7.3 #Critical inhibitor concentration
+h: 55 #Exponent of sigmoid
+kin: 0.073
+kout: 0.073
+ks: 0.135 #Solidification rate
