@@ -60,7 +60,7 @@ end
 
 begin
 params = YAML.load_file("params.yaml")
-result = solve_t_pseudonnana("seeds/annulus.png", params, 10000);
+result = solve_t_pseudonnana("seeds/annulus.png", params, 25000);
 S1 = result[1,:,:]
 S2 = result[2,:,:]
 I = result[3,:,:]
@@ -69,9 +69,9 @@ end
 
 begin
 heatmaps = []
-for key in keys(result)
-    push!(heatmaps, heatmap(result[key], color=:greys, title=key))
+for i in 1:4
+    push!(heatmaps, heatmap(result[i,:,:], aspect_ratio=1, color=:viridis))
 end
 plot(heatmaps..., layout=(2,2))
-savefig("runs/pseudonnana_annulus.png")
+savefig("runs/plots/pseudonnana_annulus.svg")
 end
