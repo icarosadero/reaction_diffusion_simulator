@@ -1,7 +1,7 @@
 #Diffusion constants
-DI: 0.24
-D1: 5.112
-D2: 0.057
+DI: 0.21
+D1: 0.112
+D2: 0.057142857
 Ic: 7.3 #Critical inhibitor concentration
 h: 55 #Exponent of sigmoid
 kin: 0.073
