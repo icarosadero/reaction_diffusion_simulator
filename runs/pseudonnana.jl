@@ -70,8 +70,44 @@ end
 begin
 heatmaps = []
 for i in 1:4
-    push!(heatmaps, heatmap(result[i,:,:], aspect_ratio=1, color=:viridis))
+    push!(heatmaps, heatmap(result[i,:,:], aspect_ratio=1, color=:hot))
 end
 plot(heatmaps..., layout=(2,2))
 savefig("runs/plots/pseudonnana_annulus.svg")
+end
+
+begin
+params = YAML.load_file("params.yaml")
+result = solve_t_pseudonnana("seeds/annulus_thin.png", params, 25000);
+S1 = result[1,:,:]
+S2 = result[2,:,:]
+I = result[3,:,:]
+S = result[4,:,:]
+end
+
+begin
+heatmaps = []
+for i in 1:4
+    push!(heatmaps, heatmap(result[i,:,:], aspect_ratio=1, color=:hot))
+end
+plot(heatmaps..., layout=(2,2))
+savefig("runs/plots/pseudonnana_annulus_thin.svg")
+end
+
+begin
+params = YAML.load_file("params.yaml")
+result = solve_t_pseudonnana("seeds/stubby.png", params, 25000);
+S1 = result[1,:,:]
+S2 = result[2,:,:]
+I = result[3,:,:]
+S = result[4,:,:]
+end
+
+begin
+heatmaps = []
+for i in 1:4
+    push!(heatmaps, heatmap(result[i,:,:], aspect_ratio=1, color=:hot))
+end
+plot(heatmaps..., layout=(2,2))
+savefig("runs/plots/stubby.svg")
 end
