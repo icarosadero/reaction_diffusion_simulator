@@ -70,7 +70,7 @@ function polar_to_cartesian(img_polar)
     R = size(P, 2)
     C = size(P, 1)
     L = floor(Int, 2*R/sqrt(2))
-    M = zeros(Int, L, L)
+    M = zeros(Float64, L, L)
     c = size(M)./2
     for y in axes(M, 1)
         for x in axes(M, 2)

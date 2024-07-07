@@ -8,13 +8,13 @@ end
 
 begin
 img = load_seed("seeds/annulus.png");
-blobs = -1 .* initialize_blobs(5, 1000, size(img)...)
+blobs = -1 .* initialize_blobs(10, 1000, size(img)...)
 img = img + blobs
 img_polar = cartesian_to_polar(img);
 end
 
 begin
-sim = waterfall(transpose(img_polar))
+sim = waterfall_scalar(transpose(img_polar))
 sim_cartesian = polar_to_cartesian(transpose(sim))
 end
 

@@ -1,6 +1,6 @@
 module automata
 
-export waterfall, initialize_blobs
+export waterfall, initialize_blobs, waterfall_scalar
 
 """
     waterfall(canvas)
@@ -41,6 +41,33 @@ function waterfall(canvas)
     return M
 end
 
+
+function waterfall_scalar(canvas)
+    M = float.(canvas)
+    for i in 2:last(axes(M, 1))
+        for j in axes(M, 2)
+            if M[i-1, j] > 0
+                if M[i, j] >= 0
+                    M[i, j] = M[i-1, j]
+                else
+                    left_j = j - 1 < 1 ? size(M, 2) : j - 1
+                    right_j = j + 1 > size(M, 2) ? 1 : j + 1
+                    if M[i, left_j] >= 0 && M[i, right_j] >= 0
+                        M[i, left_j] += M[i-1, j]/2
+                        M[i, right_j] += M[i-1, j]/2
+                    elseif M[i, left_j] >= 0
+                        M[i, left_j] += M[i-1, j]
+                    elseif M[i, right_j] >= 0
+                        M[i, right_j] += M[i-1, j]
+                    end
+                end
+            end
+        end
+    end
+    #Flip horizontally
+    M = M[:, end:-1:1]
+    return M
+end
 
 """
     initialize_blobs(radius, num_blobs, width, height)
