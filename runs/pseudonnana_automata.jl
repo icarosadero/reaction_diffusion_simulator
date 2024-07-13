@@ -7,14 +7,65 @@ using Plots, Colors
 end
 
 begin
-img = load_seed("seeds/annulus.png");
-blobs = -1 .* initialize_blobs(10, 1000, size(img)...)
-img = img + blobs
-img_polar = cartesian_to_polar(img);
+function evolve(canvas)
+    M = float.(canvas)
+    for i in 2:last(axes(M, 1))
+        for j in axes(M, 2)
+            if M[i-1, j] > 0
+                left_j = j - 1 < 1 ? size(M, 2) : j - 1
+                right_j = j + 1 > size(M, 2) ? 1 : j + 1
+                if M[i, j] == 0
+                    M[i, j] = 1
+                elseif (M[i, j] == -1) && !(M[i, left_j] == -1) && !(M[i, right_j] == -1) && !(M[i - 1, left_j] == -1) && !(M[i - 1, right_j] == -1)
+                    M[i, left_j] = 1
+                    M[i, right_j] = 1
+                elseif (M[i, j] == -1) && (M[i - 1, left_j] == -1) && !(M[i - 1, right_j] == -1) && !(M[i, left_j] == -1)
+                    M[i, right_j] = 1
+                elseif (M[i, j] == -1) && (M[i - 1, right_j] == -1) && !(M[i - 1, left_j] == -1) && !(M[i, right_j] == -1)
+                    M[i, left_j] = 1
+                elseif (M[i, j] == -1) && (M[i, left_j] == -1) && !(M[i, right_j] == -1) && !(M[i - 1, left_j] == -1)
+                    M[i, right_j] = 1
+                    M[i - 1, left_j] = 1
+                elseif (M[i, j] == -1) && (M[i, right_j] == -1) && !(M[i, left_j] == -1) && !(M[i - 1, right_j] == -1)
+                    M[i, left_j] = 1
+                    M[i - 1, right_j] = 1
+                elseif (M[i, j] == -1) && (M[i, right_j] == -1) && (M[i, left_j] == -1) && !(M[i - 1, right_j] == -1) && !(M[i - 1, left_j] == -1)
+                    M[i - 1, right_j] = 1
+                    M[i - 1, left_j] = 1
+                end
+            end
+        end
+    end
+    #Flip horizontally
+    M = M[:, end:-1:1]
+    return M
+end
 end
 
 begin
-sim = waterfall_scalar(transpose(img_polar))
+img = load_seed("seeds/annulus.png");
+blobs = initialize_blobs(10, 2000, size(img)..., -1)
+canvas = zeros(size(img))
+for i in axes(canvas, 1)
+    for j in axes(canvas, 2)
+        if img[i, j] > 0
+            canvas[i, j] = 1
+        else
+            canvas[i, j] = blobs[i, j]
+        end
+    end
+end
+img_polar = cartesian_to_polar(canvas);
+end
+
+begin
+sim = transpose(copy(img_polar))
+for _ in 1:100
+    sim = evolve(sim)
+end
+end
+
+begin
 sim_cartesian = polar_to_cartesian(transpose(sim))
 end
 

@@ -3,7 +3,7 @@ using Images
 using ProgressLogging
 import YAML
 
-export laplacian, solve_square, solve_square_dict, solve_t_pseudonnana
+export laplacian, solve_square, solve_square_dict
 
 """
     laplacian(grid, dx)

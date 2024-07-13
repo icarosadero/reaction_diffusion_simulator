@@ -28,12 +28,11 @@ Solves a reaction-diffusion system using the pseudonanna model.
 # Returns
 An array representing the evolution of the system over time.
 """
-function solve_t_pseudonnana(seed_path, parameters, steps, dx=1.0, dt=1.0)
-    D_max = max(parameters["DI"], parameters["D1"], parameters["D2"])
+function solve_t_pseudonnana(seed_path, parameters, steps, dx=1.0, dt=1.0, pad_percentage = 0)
     #dx*dx/(2 * D_max)
     @info "Steps" dt dx D_max
 
-    seed = load_seed(seed_path)
+    seed = load_seed(seed_path, pad_percentage)
 
     fields = zeros(4, size(seed)...) #Order: S1, S2, I, S
     fields[1, :, :] = ones(size(seed))
@@ -60,17 +59,42 @@ end
 
 begin
 params = YAML.load_file("params.yaml")
-result = solve_t_pseudonnana("seeds/annulus.png", params, 25000);
+D_max = max(params["DI"], params["D1"], params["D2"])
+dx = 0.4
+dt = dx*dx/(4 * D_max)
+result = solve_t_pseudonnana("seeds/annulus_blur.png", params, 10000, dx, dt);
 S1 = result[1,:,:]
 S2 = result[2,:,:]
 I = result[3,:,:]
+θ = (params["Ic"]^params["h"]) ./ ((params["Ic"]^params["h"]) .+ I.^params["h"])
 S = result[4,:,:]
+plot_include = [S1, S2, θ, S]
 end
 
 begin
 heatmaps = []
-for i in 1:4
-    push!(heatmaps, heatmap(result[i,:,:], aspect_ratio=1, color=:hot))
+for X in plot_include
+    push!(heatmaps, heatmap(X, aspect_ratio=1, color=:hot))
+end
+plot(heatmaps..., layout=(2,2))
+savefig("runs/plots/pseudonnana_annulus_blur.svg")
+end
+
+begin
+params = YAML.load_file("params.yaml")
+result = solve_t_pseudonnana("seeds/annulus.png", params, 10000);
+S1 = result[1,:,:]
+S2 = result[2,:,:]
+I = result[3,:,:]
+θ = (params["Ic"]^params["h"]) ./ ((params["Ic"]^params["h"]) .+ I.^params["h"])
+S = result[4,:,:]
+plot_include = [S1, S2, θ, S]
+end
+
+begin
+heatmaps = []
+for X in plot_include
+    push!(heatmaps, heatmap(X, aspect_ratio=1, color=:hot))
 end
 plot(heatmaps..., layout=(2,2))
 savefig("runs/plots/pseudonnana_annulus.svg")
